@@ -382,6 +382,7 @@ def check_layer_forward(layer, dshape):
     mx.test_utils.assert_almost_equal(np_out, out.asnumpy(), rtol=1e-5, atol=1e-6)
     mx.test_utils.assert_almost_equal(np_dx, x.grad.asnumpy(), rtol=1e-5, atol=1e-6)
 
+@unittest.skip("Flaky test: https://github.com/apache/incubator-mxnet/issues/11506")
 @with_seed()
 def test_conv():
     layers1d = [
@@ -1173,6 +1174,7 @@ def check_hybrid_static_memory(**kwargs):
     for key in grads1:
         assert_almost_equal(grads1[key].asnumpy(), grads2[key].asnumpy(), rtol=1e-3, atol=1e-5)
 
+@unittest.skip("Flaky test: https://github.com/apache/incubator-mxnet/issues/11171")
 def test_hybrid_static_memory():
     check_hybrid_static_memory()
     check_hybrid_static_memory(static_alloc=True)
@@ -1195,6 +1197,7 @@ def check_hybrid_static_memory_switching(**kwargs):
         y.backward()
     mx.nd.waitall()
 
+@unittest.skip("Flaky test: https://github.com/apache/incubator-mxnet/issues/11171")
 def test_hybrid_static_memory_switching():
     check_hybrid_static_memory_switching()
     check_hybrid_static_memory_switching(static_alloc=True)
@@ -1262,9 +1265,9 @@ def test_summary():
 
     net2 = nn.Sequential()
     with net2.name_scope():
-        net2.add(nn.Embedding(10, 20))
+        net2.add(nn.Embedding(40, 30))
         net2.add(gluon.rnn.LSTM(30))
-        net2.add(nn.Dense(40, flatten=False))
+        net2.add(nn.Dense(40, flatten=False, params=net2[0].params))
     net2.initialize()
     net2.summary(mx.nd.ones((80, 32)))
 
